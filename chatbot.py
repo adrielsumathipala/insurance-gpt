@@ -116,6 +116,15 @@ if not check_password():
 # Streamlit app layout
 st.title("Insurance GPT")
 
+# Hide the Streamlit buttons
+hide_streamlit_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            </style>
+            """
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
 user_question = st.text_input("Ask a question:")
 
 if user_question:
