@@ -24,6 +24,60 @@ EMBEDDING_MODEL = SentenceTransformer('sentence-transformers/all-mpnet-base-v2')
 # Set OpenAI API key
 openai.api_key = st.secrets["PERSONAL_OPENAI_KEY"]
 
+# Hide the Streamlit buttons
+hide_streamlit_styles1 = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            </style>
+            """
+st.markdown(hide_streamlit_styles1, unsafe_allow_html=True)
+
+hide_streamlit_styles2 = """
+    <style>
+    ._profileContainer_gzau3_53 {
+        display: none;
+    }
+    ._link_gzau3_10 {
+        display: none;
+    }
+    </style>
+"""
+
+st.markdown(hide_streamlit_styles2, unsafe_allow_html=True)
+
+hide_streamlit_style = """
+                <style>
+                div[data-testid="stToolbar"] {
+                visibility: hidden;
+                height: 0%;
+                position: fixed;
+                }
+                div[data-testid="stDecoration"] {
+                visibility: hidden;
+                height: 0%;
+                position: fixed;
+                }
+                div[data-testid="stStatusWidget"] {
+                visibility: hidden;
+                height: 0%;
+                position: fixed;
+                }
+                #MainMenu {
+                visibility: hidden;
+                height: 0%;
+                }
+                header {
+                visibility: hidden;
+                height: 0%;
+                }
+                footer {
+                visibility: hidden;
+                height: 0%;
+                }
+                </style>
+                """
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 def query_mongo(ids: List[str]) -> List[dict]:
     """
@@ -115,61 +169,6 @@ if not check_password():
 
 # Streamlit app layout
 st.title("Insurance GPT")
-
-# Hide the Streamlit buttons
-hide_streamlit_styles1 = """
-            <style>
-            #MainMenu {visibility: hidden;}
-            footer {visibility: hidden;}
-            </style>
-            """
-st.markdown(hide_streamlit_styles1, unsafe_allow_html=True)
-
-hide_streamlit_styles2 = """
-    <style>
-    ._profileContainer_gzau3_53 {
-        display: none;
-    }
-    ._link_gzau3_10 {
-        display: none;
-    }
-    </style>
-"""
-
-st.markdown(hide_streamlit_styles2, unsafe_allow_html=True)
-
-hide_streamlit_style = """
-                <style>
-                div[data-testid="stToolbar"] {
-                visibility: hidden;
-                height: 0%;
-                position: fixed;
-                }
-                div[data-testid="stDecoration"] {
-                visibility: hidden;
-                height: 0%;
-                position: fixed;
-                }
-                div[data-testid="stStatusWidget"] {
-                visibility: hidden;
-                height: 0%;
-                position: fixed;
-                }
-                #MainMenu {
-                visibility: hidden;
-                height: 0%;
-                }
-                header {
-                visibility: hidden;
-                height: 0%;
-                }
-                footer {
-                visibility: hidden;
-                height: 0%;
-                }
-                </style>
-                """
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 user_question = st.text_input("Ask a question:")
 
