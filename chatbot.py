@@ -1,5 +1,4 @@
 import hmac
-import os
 from typing import List
 
 import openai
@@ -9,11 +8,11 @@ from pymongo import MongoClient
 from sentence_transformers import SentenceTransformer
 
 # Initialize Pinecone
-pc = pinecone.Pinecone(api_key=os.getenv("PERSONAL_PINECONE_KEY"))
+pc = pinecone.Pinecone(api_key=st.secrets["PERSONAL_PINECONE_KEY"])
 index = pc.Index("consilience-google-drive")
 
 # Initialize Mongo
-mongo_pwd = os.environ["MONGO_TEST_DB_PASSWORD"]
+mongo_pwd = st.secrets["MONGO_TEST_DB_PASSWORD"]
 uri = f"mongodb+srv://adriel:{mongo_pwd}@cluster0.9nejc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 client = MongoClient(uri)
 
@@ -23,7 +22,7 @@ MONGO = client["test"]["consilience-google-drive"]
 EMBEDDING_MODEL = SentenceTransformer('sentence-transformers/all-mpnet-base-v2')
 
 # Set OpenAI API key
-openai.api_key = os.getenv("PERSONAL_OPENAI_KEY")
+openai.api_key = st.secrets["PERSONAL_OPENAI_KEY"]
 
 
 def query_mongo(ids: List[str]) -> List[dict]:
@@ -115,7 +114,7 @@ if not check_password():
     st.stop()  # Do not continue if check_password is not True.
 
 # Streamlit app layout
-st.title("Insurance GPT with Consilience")
+st.title("Insurance GPT")
 
 user_question = st.text_input("Ask a question:")
 
@@ -144,7 +143,6 @@ if user_question:
             # Optionally, display the relevant documents
             st.write("\n\n\n**Relevant Information:**")
             for i, doc in enumerate(docs):
-                print(doc['text'])
                 # Markdown requires two newline characters to add a line break:
                 text = doc['text'].replace('\n', '\n\n')
                 st.markdown(
