@@ -117,17 +117,17 @@ if not check_password():
 st.title("Insurance GPT")
 
 # Hide the Streamlit buttons
-hide_streamlit_style = """
+hide_streamlit_styles1 = """
             <style>
             #MainMenu {visibility: hidden;}
             footer {visibility: hidden;}
             </style>
             """
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+st.markdown(hide_streamlit_styles1, unsafe_allow_html=True)
 
-hide_streamlit_styles = """
+hide_streamlit_styles2 = """
     <style>
-    ._container_gzau3_1._viewerBadge_nim44_23 {
+    ._profileContainer_gzau3_53 {
         display: none;
     }
     ._link_gzau3_10 {
@@ -136,7 +136,7 @@ hide_streamlit_styles = """
     </style>
 """
 
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+st.markdown(hide_streamlit_styles2, unsafe_allow_html=True)
 
 user_question = st.text_input("Ask a question:")
 
