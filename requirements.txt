@@ -1,0 +1,9 @@
+openai
+openai[datalib]
+pinecone-client[grpc]
+pymongo[srv]
+sentence-transformers
+streamlit
+streamlit-authenticator
+tenacity
+watchdog  # For improved Streamlist performance
