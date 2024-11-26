@@ -125,6 +125,19 @@ hide_streamlit_style = """
             """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
+hide_streamlit_styles = """
+    <style>
+    ._container_gzau3_1._viewerBadge_nim44_23 {
+        display: none;
+    }
+    ._link_gzau3_10 {
+        display: none;
+    }
+    </style>
+"""
+
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
 user_question = st.text_input("Ask a question:")
 
 if user_question:
