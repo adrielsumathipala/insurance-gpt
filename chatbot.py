@@ -24,6 +24,10 @@ EMBEDDING_MODEL = SentenceTransformer('sentence-transformers/all-mpnet-base-v2')
 # Set OpenAI API key
 openai.api_key = st.secrets["PERSONAL_OPENAI_KEY"]
 
+st.set_page_config(
+    page_title="Insurance GPT", page_icon=None, layout="centered", initial_sidebar_state="auto", menu_items=None
+)
+
 # Hide the Streamlit buttons
 hide_streamlit_styles1 = """
             <style>
@@ -36,10 +40,12 @@ st.markdown(hide_streamlit_styles1, unsafe_allow_html=True)
 hide_streamlit_styles2 = """
     <style>
     ._profileContainer_gzau3_53 {
-        display: none;
+        display: none !important;
+        visibility: hidden !important;
     }
     ._link_gzau3_10 {
-        display: none;
+        display: none !important;
+        visibility: hidden !important;
     }
     </style>
 """
