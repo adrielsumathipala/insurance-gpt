@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insurance GPT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <h1 class="text-3xl font-bold text-center mb-8">Insurance GPT</h1>
+        
+        <!-- Question Input -->
+        <div class="mb-8">
+            <form id="questionForm" class="flex flex-col gap-4">
+                <div class="flex gap-4">
+                    <select
+                        id="stateSelect"
+                        class="p-4 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"
+                        required
+                    >
+                        <option value="">Select State</option>
+                        <option value="Illinois">Illinois</option>
+                        <option value="West Virginia">West Virginia</option>
+                    </select>
+                    <input 
+                        type="text" 
+                        id="questionInput" 
+                        placeholder="Ask a question about insurance regulations..."
+                        class="flex-1 p-4 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"
+                        required
+                    >
+                    <button 
+                        type="submit"
+                        class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+                    >
+                        Ask
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div id="loading" class="hidden text-center mb-4">
+            <div class="animate-spin inline-block w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full"></div>
+        </div>
+
+        <!-- Response Section -->
+        <div id="responseSection" class="hidden">
+            <div class="bg-white rounded-lg p-6 shadow-md mb-6">
+                <h2 class="text-xl font-semibold mb-4">Answer:</h2>
+                <div id="answer" class="text-gray-700"></div>
+            </div>
+
+            <!-- Source Documents -->
+            <div class="bg-white rounded-lg p-6 shadow-md">
+                <h2 class="text-xl font-semibold mb-4">Source Documents:</h2>
+                <div id="documents" class="space-y-4"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questionForm = document.getElementById('questionForm');
+        const loading = document.getElementById('loading');
+        const responseSection = document.getElementById('responseSection');
+        const answerDiv = document.getElementById('answer');
+        const documentsDiv = document.getElementById('documents');
+
+        questionForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const question = document.getElementById('questionInput').value;
+            const state = document.getElementById('stateSelect').value;
+            
+            if (!state) {
+                alert('Please select a state');
+                return;
+            }
+            
+            // Show loading, hide previous response
+            loading.classList.remove('hidden');
+            responseSection.classList.add('hidden');
+            
+            try {
+                const response = await fetch('/ask', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-API-Key': '{{ api_key }}' // API key injected from server
+                    },
+                    body: JSON.stringify({ question, state }),
+                });
+                
+                const data = await response.json();
+                
+                // Display answer
+                answerDiv.textContent = data.answer;
+                
+                // Display documents
+                documentsDiv.innerHTML = data.documents.map(doc => `
+                    <div class="border-l-4 border-blue-500 pl-4 py-2">
+                        <div class="font-semibold text-gray-700">${doc.file_name}</div>
+                        <div class="text-gray-600 text-sm mt-1">${doc.text}</div>
+                    </div>
+                `).join('');
+                
+                // Show response section
+                responseSection.classList.remove('hidden');
+            } catch (error) {
+                console.error('Error:', error);
+                answerDiv.textContent = 'An error occurred while processing your question.';
+                responseSection.classList.remove('hidden');
+            } finally {
+                loading.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,3 +1,5 @@
+.ebignore
+__pycache__/*
 .idea
 .venv39
 .streamlit
