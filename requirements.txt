@@ -1,10 +1,11 @@
-numpy < 2.0.0
+fastapi[standard]
+gunicorn>=21.2.0
+jinja2
+numpy<2.0.0
 openai
-openai[datalib]
-pinecone-client[grpc]
-pymongo[srv]
+pinecone-client
+pydantic
+pymongo
+python-multipart
 sentence-transformers
-streamlit
-streamlit-authenticator
-tenacity
-watchdog  # For improved Streamlist performance
+uvicorn
