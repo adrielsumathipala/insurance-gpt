@@ -3,3 +3,8 @@ __pycache__/*
 .idea
 .venv39
 .streamlit
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
