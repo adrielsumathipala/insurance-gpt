@@ -31,8 +31,9 @@
                             required
                         >
                             <option value="">Select State</option>
-                            <option value="Illinois">Illinois</option>
-                            <option value="West Virginia">West Virginia</option>
+                            {% for state in states %}
+                                <option value="{{ state }}">{{ state }}</option>
+                            {% endfor %}
                         </select>
                         <input 
                             type="text" 

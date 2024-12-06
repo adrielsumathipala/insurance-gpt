@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import openai
 import pinecone
+from state_to_files import STATE_TO_FILE_MAP
 from pymongo import MongoClient
 from sentence_transformers import SentenceTransformer
 import os
@@ -91,12 +92,7 @@ def get_embedding(text) -> List[float]:
 
 
 def generate_filter_condition(state: str) -> dict:
-    STATE_TO_FILE_NAME = {
-        "Illinois": ["Illinois-DATA.xlsx (Converted - 2024-03-21 15:18)"],
-        "West Virginia": ["West Virginia-DATA"]
-    }
-
-    fnames = STATE_TO_FILE_NAME[state]
+    fnames = STATE_TO_FILE_MAP[state]
 
     return {
         "file_name" : {"$in": fnames}
@@ -134,9 +130,11 @@ def generate_response(question: str, context: str) -> str:
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
+    states = list(STATE_TO_FILE_MAP.keys())
     return templates.TemplateResponse("index.html", {
         "request": request,
-        "api_key": EnvVars.INSURANCE_GPT_API_KEY
+        "api_key": EnvVars.INSURANCE_GPT_API_KEY,
+        "states": states
     })
 
 @app.post("/ask")
