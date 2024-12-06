@@ -1,3 +1,4 @@
+python-dotenv
 fastapi[standard]
 gunicorn>=21.2.0
 jinja2
@@ -8,5 +9,5 @@ pydantic
 pymongo
 python-multipart
 sentence-transformers
-uvicorn
 tiktoken
+uvicorn

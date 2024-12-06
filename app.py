@@ -14,6 +14,10 @@ from sentence_transformers import SentenceTransformer
 import os
 import logging
 from tiktoken import encoding_for_model
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 GPT_MODEL = "gpt-3.5-turbo"
 # Initialize tokenizer for gpt-3.5-turbo
