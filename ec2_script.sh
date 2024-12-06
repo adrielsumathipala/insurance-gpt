@@ -1,6 +1,7 @@
 sudo yum update -y
 sudo yum install python3 python3-pip -y
 sudo yum install git -y
+sudo yum install nginx -y
 
 git clone https://github.com/adrielsumathipala/insurance-gpt.git
 cd insurance-gpt

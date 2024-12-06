@@ -1,5 +1,5 @@
 from typing import List, Optional
-from fastapi import FastAPI, HTTPException, Request, Security, Depends
+from fastapi import FastAPI, HTTPException, Request, Security, Depends, Form
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
@@ -23,6 +23,7 @@ class EnvVars:
     MONGO_TEST_DB_PASSWORD = os.environ["MONGO_TEST_DB_PASSWORD"] 
     PERSONAL_OPENAI_KEY = os.environ["PERSONAL_OPENAI_KEY"]
     INSURANCE_GPT_API_KEY = os.environ["INSURANCE_GPT_API_KEY"]
+    APP_PASSWORD = os.environ.get("APP_PASSWORD", "lula")
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -172,3 +173,9 @@ async def ask_question(
     except Exception as e:
         logger.exception("Error in /ask endpoint:")
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/check_password")
+async def check_password(password: str = Form(...)):
+    if password == EnvVars.APP_PASSWORD:
+        return {"valid": True}
+    return {"valid": False}
