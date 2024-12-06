@@ -9,3 +9,4 @@ pymongo
 python-multipart
 sentence-transformers
 uvicorn
+tiktoken

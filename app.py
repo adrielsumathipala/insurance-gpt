@@ -13,6 +13,12 @@ from pymongo import MongoClient
 from sentence_transformers import SentenceTransformer
 import os
 import logging
+from tiktoken import encoding_for_model
+
+GPT_MODEL = "gpt-3.5-turbo"
+# Initialize tokenizer for gpt-3.5-turbo
+ENCODING = encoding_for_model(GPT_MODEL)
+MAX_TOKENS = 16385  # max context length for gpt-3.5-turbo
 
 # Disabling to avoid potential deadlock
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
@@ -111,21 +117,37 @@ def generate_context(docs: List[dict]) -> str:
     return context
 
 def generate_response(question: str, context: str) -> str:
+    SYSTEM_PROMPT = """
+    You are a world-class insurance agent. Rely only on the context to generate an answer,and your own internal
+    insurance regulation understanding. You can summarize or expand on the context but don't inject any new
+    information. If there is a regulation number provided in the context that is relevant, cite it. If the
+    context provided isn't helpful or is not relevant to the question just say 'I don't know'.
+    """
+    
+    # Calculate tokens for system message and question
+    system_tokens = len(ENCODING.encode(SYSTEM_PROMPT))
+    question_tokens = len(ENCODING.encode(f"Question: {question}\n\nRelevant Information:\n\n\nAnswer:"))
+    
+    # Calculate available tokens for context
+    available_tokens = MAX_TOKENS - system_tokens - question_tokens - 1200 # Add buffer for response
+
+    # Truncate context if needed
+    context_tokens = ENCODING.encode(context)
+    if len(context_tokens) > available_tokens:
+        context = ENCODING.decode(context_tokens[:available_tokens])
+        context += "..."
+
     prompt = f"Question: {question}\n\nRelevant Information:\n{context}\n\nAnswer:"
     response = openai.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model=GPT_MODEL,
         messages=[
-            {"role": "system", "content": """
-            You are a world-class insurance agent. Rely only on the context to generate an answer,and your own internal
-            insurance regulation understanding. You can summarize or expand on the context but don't inject any new
-            information. If there is a regulation number provided in the context that is relevant, cite it. If the
-            context provided isn't helpful or is not relevant to the question just say 'I don't know'.
-            """},
+            {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": prompt}
         ],
         max_tokens=1000,
         temperature=0
     )
+
     return response.choices[0].message.content.strip()
 
 @app.get("/", response_class=HTMLResponse)
