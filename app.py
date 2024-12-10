@@ -34,7 +34,7 @@ class EnvVars:
     MONGO_TEST_DB_PASSWORD = os.environ["MONGO_TEST_DB_PASSWORD"] 
     PERSONAL_OPENAI_KEY = os.environ["PERSONAL_OPENAI_KEY"]
     INSURANCE_GPT_API_KEY = os.environ["INSURANCE_GPT_API_KEY"]
-    APP_PASSWORD = os.environ.get("APP_PASSWORD", "lula")
+    APP_PASSWORD = os.environ["APP_PASSWORD"]
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -122,10 +122,13 @@ def generate_context(docs: List[dict]) -> str:
 
 def generate_response(question: str, context: str) -> str:
     SYSTEM_PROMPT = """
-    You are a world-class insurance agent. Rely only on the context to generate an answer,and your own internal
+    You are a world-class insurance agent, answering quesstions from a team of other insurance agents. Your job is to help other 
+    insruance agents answer questions and give your opinion. Rely only on the context to generate an answer, and your own internal
     insurance regulation understanding. You can summarize or expand on the context but don't inject any new
-    information. If there is a regulation number provided in the context that is relevant, cite it. If the
-    context provided isn't helpful or is not relevant to the question just say 'I don't know'.
+    information. When asked for a specific figure or number like a dollar amount or age limit and it appears in the context, provide it in the
+    answer.  If you are not sure about the figure requested, add a disclaimer for those types of questions saying iGPT is still learning
+    and encourages you to read the statutes below for more specifics. As much as possible, please cite the regulation or statute in the context in 
+    your answer using parenthenticals. If the context provided isn't helpful or is not relevant to the question just say 'I don't know'.
     """
     
     # Calculate tokens for system message and question
@@ -133,7 +136,7 @@ def generate_response(question: str, context: str) -> str:
     question_tokens = len(ENCODING.encode(f"Question: {question}\n\nRelevant Information:\n\n\nAnswer:"))
     
     # Calculate available tokens for context
-    available_tokens = MAX_TOKENS - system_tokens - question_tokens - 1200 # Add buffer for response
+    available_tokens = MAX_TOKENS - system_tokens - question_tokens - 2000 # Add buffer for response
 
     # Truncate context if needed
     context_tokens = ENCODING.encode(context)
@@ -149,7 +152,7 @@ def generate_response(question: str, context: str) -> str:
             {"role": "user", "content": prompt}
         ],
         max_tokens=1000,
-        temperature=0
+        temperature=0.7
     )
 
     return response.choices[0].message.content.strip()
