@@ -103,8 +103,8 @@
                 chatHistoryDiv.innerHTML = chatHistory.map((entry, index) => `
                     <div class="border-l-4 border-green-500 pl-4 py-2 mb-4">
                         <div class="font-semibold text-gray-700">Q: ${entry.question}</div>
-                        <div class="text-gray-600 mt-2">A: ${entry.answer}</div>
                         <div class="text-gray-600 mt-2">State: ${entry.state}</div>
+                        <div class="text-gray-600 mt-2">A: ${entry.answer}</div>
                     </div>
                 `).join('');
                 
