@@ -70,10 +70,55 @@
                     <div id="documents" class="space-y-4"></div>
                 </div>
             </div>
+
+            <!-- Chat History Section -->
+            <div id="chatHistory" class="hidden mt-8">
+                <div class="bg-white rounded-lg p-6 shadow-md">
+                    <h2 class="text-xl font-semibold mb-4">Chat History:</h2>
+                    <div id="chatHistoryContent" class="space-y-4"></div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
+        // Initialize chat history array
+        let chatHistory = JSON.parse(localStorage.getItem('chatHistory')) || [];
+        const MAX_HISTORY = 10;
+
+        // Function to add new Q&A to history
+        function addToHistory(question, answer, state) {
+            chatHistory.unshift({ question, answer, state }); // Add to beginning
+            if (chatHistory.length > MAX_HISTORY) {
+                chatHistory.pop(); // Remove oldest entry
+            }
+            localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+            updateChatHistoryDisplay();
+        }
+
+        // Function to update chat history display
+        function updateChatHistoryDisplay() {
+            const chatHistoryDiv = document.getElementById('chatHistoryContent');
+            if (chatHistory.length > 0) {
+                chatHistoryDiv.innerHTML = chatHistory.map((entry, index) => `
+                    <div class="border-l-4 border-green-500 pl-4 py-2 mb-4">
+                        <div class="font-semibold text-gray-700">Q: ${entry.question}</div>
+                        <div class="text-gray-600 mt-2">A: ${entry.answer}</div>
+                        <div class="text-gray-600 mt-2">State: ${entry.state}</div>
+                    </div>
+                `).join('');
+                
+                // Show the chat history section
+                document.getElementById('chatHistory').classList.remove('hidden');
+            } else {
+                // Hide the chat history section if there is no chat history
+                document.getElementById('chatHistory').classList.add('hidden');
+            }
+        }
+
+        // Update chat history display on page load
+        updateChatHistoryDisplay();
+
         const questionForm = document.getElementById('questionForm');
         const loading = document.getElementById('loading');
         const responseSection = document.getElementById('responseSection');
@@ -108,6 +153,7 @@
                 
                 // Display answer
                 answerDiv.textContent = data.answer;
+                addToHistory(question, data.answer, state);
                 
                 // Display documents
                 documentsDiv.innerHTML = data.documents.map(doc => `
