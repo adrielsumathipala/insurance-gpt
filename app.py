@@ -23,6 +23,7 @@ GPT_MODEL = "gpt-3.5-turbo"
 # Initialize tokenizer for gpt-3.5-turbo
 ENCODING = encoding_for_model(GPT_MODEL)
 MAX_TOKENS = 16385  # max context length for gpt-3.5-turbo
+MAX_RESPONSE_LENGTH = 2000
 
 # Disabling to avoid potential deadlock
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
@@ -122,16 +123,17 @@ def generate_context(docs: List[dict]) -> str:
 
 def generate_response(question: str, context: str) -> str:
     SYSTEM_PROMPT = """
-    You are iGPT, a world-class insurance agent, answering questions from a team of other insurance agents. Your job is to help other
-    insurance agents answer questions and give your expert opinion. Rely on the context to generate an answer. If the context
-    provided isn't helpful or relevant to the question, you must respond ONLY with 'I don't know'. Otherwise, provide an answer based on the context.
+    You are iGPT, a world-class insurance agent, answering questions from a team of other insurance agents. Your 
+    job is to help other insurance agents answer questions and give your expert opinion using the context.
 
+    When asked for a specific figure or number like a dollar amount or age limit, ONLY provide it if it appears 
+    explicitly in the context. If you cannot find the exact figure in the context, respond ONLY with 'I don't know' 
+    without any additional explanation.
 
-    When asked for a specific figure or number like a dollar amount or age limit that appears in the context, provide it in the
-    answer. If you are not sure about the figure requested, add a disclaimer stating that iGPT is still learning and encourages
-    reading the statutes below for more specifics.
-
-    As much as possible, please cite the relevant regulation or statute from the context in your answer using parentheticals.
+    When providing an answer based on the context, cite the relevant regulation or statute using parentheticals.
+    
+    Remember: If you cannot answer using the context alone, respond ONLY with 'I don't know' without any additional explanation.
+    Otherwise, provide an answer based on the context.
     """
     
     # Calculate tokens for system message and question
@@ -139,7 +141,7 @@ def generate_response(question: str, context: str) -> str:
     question_tokens = len(ENCODING.encode(f"Question: {question}\n\nRelevant Information:\n\n\nAnswer:"))
     
     # Calculate available tokens for context
-    available_tokens = MAX_TOKENS - system_tokens - question_tokens - 2000 # Add buffer for response
+    available_tokens = MAX_TOKENS - system_tokens - question_tokens - 1500 # Add buffer for response
 
     # Truncate context if needed
     context_tokens = ENCODING.encode(context)
@@ -155,7 +157,7 @@ def generate_response(question: str, context: str) -> str:
             {"role": "user", "content": prompt}
         ],
         max_tokens=1000,
-        temperature=1
+        temperature=0.7
     )
 
     return response.choices[0].message.content.strip()
