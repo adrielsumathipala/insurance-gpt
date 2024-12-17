@@ -157,7 +157,7 @@ def generate_response(question: str, context: str) -> str:
             {"role": "user", "content": prompt}
         ],
         max_tokens=1000,
-        temperature=0.7
+        temperature=0.3
     )
 
     return response.choices[0].message.content.strip()
