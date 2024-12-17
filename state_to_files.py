@@ -9,6 +9,7 @@ STATE_TO_FILE_MAP = {
     "Colorado": ["Colorado-DATA.xlsx (Converted - 2024-03-21 15:18)"],
     "Connecticut": ["Connecticut-DATA.xlsx (Converted - 2024-03-21 15:18)"],
     "Delaware": ["Delaware-DATA.xlsx (Converted - 2024-03-21 15:18)"],
+    "Florida": ["Florida-DATA"],
     "Georgia": [
         "Georgia-DATA",
         "Georgia-DATA.xlsx (Converted - 2024-03-21 15:18)"
